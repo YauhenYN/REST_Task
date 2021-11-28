@@ -15,8 +15,7 @@ namespace Server.Services
         {
             Path = path;
         }
-        public abstract void Dispose();
-
+        public void Dispose() => Save();
         public abstract void Save();
 
     }

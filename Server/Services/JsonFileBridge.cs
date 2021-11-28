@@ -16,14 +16,10 @@ namespace Server.Services
             using (var stream = new StreamReader(new FileStream(Path, FileMode.OpenOrCreate)))
             {
                 if (stream.BaseStream.Length > 0) Contexts = JsonSerializer.Deserialize<List<Context>>(stream.ReadToEnd());
-                else Contexts = new List<Context>(); 
+                else Contexts = new List<Context>();
             }
         }
 
-        public override void Dispose()
-        {
-            Save();
-        }
         public override void Save()
         {
             string str = JsonSerializer.Serialize<List<Context>>(Contexts);

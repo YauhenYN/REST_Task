@@ -23,53 +23,54 @@ namespace Server.Controllers
 
 
         //CRUD
-        [Route("{cardNumber:int?}")]
         [HttpGet]
-        public IEnumerable<Models.InformationCard> Read(int? cardNumber)
+        public ActionResult<Models.InformationCard[]> Read()
         {
-            if (cardNumber == null)
-            {
-                return _fileBridge.Contexts;
-            }
-            else
-            {
-                return new Models.InformationCard[] { _fileBridge.Contexts.Count > cardNumber ?  _fileBridge.Contexts[cardNumber.Value] : new Models.InformationCard() { Name = "NULL", Img = "NULL" } };
-            }
+            if (_fileBridge.Contexts.Count > 0) return _fileBridge.Contexts.ToArray();
+            return NotFound();
+        }
+
+        [Route("{cardNumber:int}")]
+        [HttpGet]
+        public ActionResult<Models.InformationCard> Read(int? cardNumber)
+        {
+            if (_fileBridge.Contexts.Count > cardNumber) return _fileBridge.Contexts[cardNumber.Value];
+            return NotFound();
         }
 
         [HttpPost]
-        public bool Create(Models.InformationCard card)
+        public ActionResult Create(Models.InformationCard card)
         {
-            if (card != null)
+            if (card.Validate())
             {
                 _fileBridge.Contexts.Add(card);
-                return true;
+                return Ok();
             }
-            return false;
+            return ValidationProblem();
         }
 
         [HttpPut]
-        public bool Update(Models.InformationCard card)
+        public ActionResult Update(Models.InformationCard card)
         {
-            if (card != null)
+            if (card.Validate())
             {
                 var selectedCards = _fileBridge.Contexts.Where(e => e.Name.Equals(card.Name)).ToArray();
                 foreach (var selectedCard in selectedCards) selectedCard.Img = card.Img;
-                if (selectedCards.Length == 0) return false;
-                return true;
+                if (selectedCards.Length == 0) return NotFound();
+                return Ok();
             }
-            return false;
+            return ValidationProblem();
         }
 
         [HttpDelete]
-        public bool Delete(string cardName)
+        public ActionResult Delete(string cardName)
         {
-            if (cardName != null)
+            if (cardName != "")
             {
-                if (_fileBridge.Contexts.RemoveAll(e => e.Name.Equals(cardName)) == 0) return false;
-                return true;
+                if (_fileBridge.Contexts.RemoveAll(e => e.Name.Equals(cardName)) == 0) return NotFound();
+                return Ok();
             }
-            return false;
+            return ValidationProblem();
         }
     }
 }

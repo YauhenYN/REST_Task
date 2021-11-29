@@ -24,7 +24,7 @@ namespace Server.Controllers
 
         //CRUD
         [HttpGet]
-        public ActionResult<Models.InformationCard[]> Read()
+        public ActionResult<Models.InformationCard[]> ReadAll()
         {
             if (_fileBridge.Contexts.Count > 0) return _fileBridge.Contexts.ToArray();
             return NotFound();

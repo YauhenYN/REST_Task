@@ -14,12 +14,14 @@ namespace Server
     {
         public static void Main(string[] args)
         {
+            IHost host = CreateHostBuilder(args).Build();
             try
             {
-            CreateHostBuilder(args).Build().Run(); 
+                host.Run();
             }
             catch(Exception e)
             {
+                host.Services.GetService<Services.IFileBridge<Models.InformationCard>>().Dispose();
                 Console.WriteLine(e.Message);
                 Console.Read();
             }

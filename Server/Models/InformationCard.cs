@@ -15,8 +15,9 @@ namespace Server.Models
             return false;
         }
     }
-    //file(non-encoded) => application.set(base64:IFileBridge)
-    //user(base64) => application.set(empty)
-    //user(base64) <= application.get(empty)
-    //application.get(base64) => file(non-encoded)
+    //img
+    //file(base64) => application.set(base64:IFileBridge)
+    //user(base64) => application.set(base64)
+    //user(base64) <= application.get(base64)
+    //application.get(base64) => file(base64)
 }

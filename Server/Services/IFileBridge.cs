@@ -10,12 +10,17 @@ namespace Server.Services
     {
         public string Path { get; protected set; }
         public List<Context> Contexts { get; set; }
+        public event Action OnDispose;
 
         public IFileBridge(string path)
         {
             Path = path;
         }
-        public void Dispose() => Save();
+        public void Dispose()
+        {
+            OnDispose?.Invoke();
+            Save();
+        }
         public abstract void Save();
 
     }

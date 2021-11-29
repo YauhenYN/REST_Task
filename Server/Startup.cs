@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Swashbuckle.AspNetCore;
+using System.Text;
 
 namespace Server
 {
@@ -25,10 +26,15 @@ namespace Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
             // appsettings.json
-            services.AddTransient<Services.IFileBridge<Models.InformationCard>, Services.JsonFileBridge<Models.InformationCard>>(x => new Services.JsonFileBridge<Models.InformationCard>(Configuration["InformationCardsPath"]));
+            // ак же мен€ выбесило, что при дебаге, dispose DI не вызыветс€, как будто приложение сразу вырубает.
+            //Dispose method is not executing if you use debugging, run without debugging or the results will not save to the file
+            services.AddSingleton<Services.IFileBridge<Models.InformationCard>, Services.JsonFileBridge<Models.InformationCard>>(x =>
+            {
+                var model = new Services.JsonFileBridge<Models.InformationCard>(Configuration["InformationCardsPath"]);
+                return model;
+            });
+            services.AddControllers();
             services.AddSwaggerGen();
         }
 
@@ -45,8 +51,6 @@ namespace Server
                 app.UseDeveloperExceptionPage();
             }
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

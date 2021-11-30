@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Server.Dtos.InformationCard;
 
 namespace Server.Controllers
 {
@@ -13,12 +14,12 @@ namespace Server.Controllers
     {
 
         private readonly ILogger<CardsController> _logger;
-        private readonly Services.IFileBridge<Models.InformationCard> _fileBridge;
+        private readonly List<Models.InformationCard> _cards;
 
         public CardsController(ILogger<CardsController> logger, Services.IFileBridge<Models.InformationCard> fileBridge)
         {
             _logger = logger;
-            _fileBridge = fileBridge;
+            _cards = fileBridge.Contexts;
         }
 
 
@@ -26,51 +27,40 @@ namespace Server.Controllers
         [HttpGet]
         public ActionResult<Models.InformationCard[]> ReadAll()
         {
-            if (_fileBridge.Contexts.Count > 0) return _fileBridge.Contexts.ToArray();
+            if (_cards.Count > 0) return _cards.ToArray();
             return NotFound();
         }
 
-        [Route("{cardNumber:int}")]
+        [Route("{cardName}")]
         [HttpGet]
-        public ActionResult<Models.InformationCard> Read(int? cardNumber)
+        public ActionResult<Models.InformationCard[]> Read(string cardName)
         {
-            if (_fileBridge.Contexts.Count > cardNumber) return _fileBridge.Contexts[cardNumber.Value];
+            var cards = _cards.Where(card => card.Name == cardName).ToArray();
+            if (cards.Length > 0) return cards;
             return NotFound();
         }
 
         [HttpPost]
         public ActionResult Create(Models.InformationCard card)
         {
-            if (card.Validate())
-            {
-                _fileBridge.Contexts.Add(card);
-                return Ok();
-            }
-            return ValidationProblem();
+            _cards.Add(card);
+            return CreatedAtAction(nameof(Read), new { cardName = card.Name }, card);
         }
 
         [HttpPut]
         public ActionResult Update(Models.InformationCard card)
         {
-            if (card.Validate())
-            {
-                var selectedCards = _fileBridge.Contexts.Where(e => e.Name.Equals(card.Name)).ToArray();
-                foreach (var selectedCard in selectedCards) selectedCard.Img = card.Img;
-                if (selectedCards.Length == 0) return NotFound();
-                return Ok();
-            }
-            return ValidationProblem();
+            var selectedCards = _cards.Where(e => e.Name.Equals(card.Name)).ToArray();
+            foreach (var selectedCard in selectedCards) selectedCard.Img = card.Img;
+            if (selectedCards.Length == 0) return NotFound();
+            return Ok();
         }
 
         [HttpDelete]
         public ActionResult Delete(string cardName)
         {
-            if (cardName != "")
-            {
-                if (_fileBridge.Contexts.RemoveAll(e => e.Name.Equals(cardName)) == 0) return NotFound();
-                return Ok();
-            }
-            return ValidationProblem();
+            if (_cards.RemoveAll(e => e.Name.Equals(cardName)) == 0) return NotFound();
+            return Ok();
         }
     }
 }

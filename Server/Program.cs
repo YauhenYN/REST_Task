@@ -21,7 +21,7 @@ namespace Server
             }
             catch(Exception e)
             {
-                host.Services.GetService<Services.IFileBridge<Models.InformationCard>>().Dispose();
+                foreach(var service in host.Services.GetServices<Services.IFileBridge<Models.IEntity>>()) service.Dispose();
                 Console.WriteLine(e.Message);
                 Console.Read();
             }

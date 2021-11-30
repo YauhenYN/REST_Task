@@ -27,7 +27,6 @@ namespace Server
         public void ConfigureServices(IServiceCollection services)
         {
             // appsettings.json
-            // ак же мен€ выбесило, что при дебаге, dispose DI не вызыветс€, как будто приложение сразу вырубает.
             //Dispose method is not executing if you use debugging, run without debugging or the results will not save to the file
             services.AddSingleton<Services.IFileBridge<Models.InformationCard>, Services.JsonFileBridge<Models.InformationCard>>(x =>
             {

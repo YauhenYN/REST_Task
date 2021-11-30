@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Server.Services
 {
-    public class JsonFileBridge<Context> : IFileBridge<Context>
+    public class JsonFileBridge<Context> : IFileBridge<Context> where Context : Models.IEntity
     {
         public JsonFileBridge(string path)
             :base(path)

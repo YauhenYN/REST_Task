@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Server.Services
 {
-    public abstract class IFileBridge<Context> : IDisposable
+    public abstract class IFileBridge<Context> : IDisposable where Context : Models.IEntity
     {
         public string Path { get; protected set; }
-        public List<Context> Contexts { get; set; }
+        public List<Context> Contexts { get; protected set; }
         public event Action OnDispose;
 
         public IFileBridge(string path)

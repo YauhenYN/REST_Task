@@ -1,1 +1,1 @@
-# Task is not finished yet.
+# The task is not finished yet.

@@ -11,5 +11,7 @@ namespace Server.Dtos.InformationCard
         [Required]
         [StringLength(100, MinimumLength = 1)]
         public string Name { get; set; }
+        [Required]
+        public string Img { get; set; }
     }
 }

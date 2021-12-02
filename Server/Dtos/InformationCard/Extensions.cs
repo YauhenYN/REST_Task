@@ -8,8 +8,10 @@ namespace Server.Dtos.InformationCard
 {
     public static class Extensions
     {
-        public static IEnumerable<InformationCardDto> ToDtos(this IEnumerable<Models.InformationCard> cards) => cards.Select(card => new InformationCardDto { Name = card.Name, Img = card.Img });
-        public static IEnumerable<InformationCardDto> ToDtosBase64Img_UTF8(this IEnumerable<Models.InformationCard> cards) => cards.Select(card => new InformationCardDto { Name = card.Name, Img = card.Img.ToBase64_UTF8() });
+        public static InformationCardDto ToDto(this Models.InformationCard card) => new InformationCardDto() { Name = card.Name, Img = card.Img };
+        public static InformationCardDto ToDtoBase64Img_UTF8(this Models.InformationCard card) => new InformationCardDto() { Name = card.Name, Img = card.Img.ToBase64_UTF8() };
+        public static IEnumerable<InformationCardDto> ToDtos(this IEnumerable<Models.InformationCard> cards) => cards.Select(card => card.ToDto());
+        public static IEnumerable<InformationCardDto> ToDtosBase64Img_UTF8(this IEnumerable<Models.InformationCard> cards) => cards.Select(card => card.ToDtoBase64Img_UTF8());
         public static Models.InformationCard ToInformationCard(this CreateInformationCardDto dto) => new Models.InformationCard() { Name = dto.Name, Img = dto.Img };
         public static string ToBase64_UTF8(this string str) => Convert.ToBase64String(Encoding.UTF8.GetBytes(str));
         public static string FromBase64_UTF8(this string str) { Console.WriteLine(str); return Encoding.UTF8.GetString(Convert.FromBase64String(str)); }

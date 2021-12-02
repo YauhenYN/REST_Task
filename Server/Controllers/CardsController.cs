@@ -41,29 +41,29 @@ namespace Server.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(CreateInformationCardDto dto)
+        public ActionResult<InformationCardDto> Create(CreateInformationCardDto dto)
         {
             dto = dto.FromBase64Img_UTF8();
             var card = dto.ToInformationCard();
             _cards.Add(card);
-            return CreatedAtAction(nameof(Read), new { cardName = card.Name }, card); //нету шифрования
+            return CreatedAtAction(nameof(Read), new { cardName = card.Name }, card.ToDtoBase64Img_UTF8());
         }
 
-        [HttpPut]
+        [HttpPut("cardName")]
         public ActionResult Update(string cardName, UpdateInformationCardDto dto)
         {
             dto = dto.FromBase64Img_UTF8();
             var selectedCards = _cards.Where(e => e.Name.Equals(cardName)).ToArray();
-            foreach (var selectedCard in selectedCards) { selectedCard.Name = dto.Name; selectedCard.Img = dto.Img; }
             if (selectedCards.Length == 0) return NotFound();
-            return Ok();
+            foreach (var selectedCard in selectedCards) { selectedCard.Name = dto.Name; selectedCard.Img = dto.Img; }
+            return NoContent();
         }
 
-        [HttpDelete]
+        [HttpDelete("cardName")]
         public ActionResult Delete(string cardName)
         {
             if (_cards.RemoveAll(e => e.Name.Equals(cardName)) == 0) return NotFound();
-            return Ok();
+            return NoContent();
         }
     }
 }

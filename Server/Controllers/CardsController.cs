@@ -27,7 +27,7 @@ namespace Server.Controllers
         [HttpGet]
         public ActionResult<InformationCardDto[]> ReadAll()
         {
-            if (_cards.Count > 0) return _cards.ToDtos().ToArray();
+            if (_cards.Count > 0) return _cards.ToDtosBase64Img_UTF8().ToArray();
             return NotFound();
         }
 
@@ -35,22 +35,24 @@ namespace Server.Controllers
         [HttpGet]
         public ActionResult<InformationCardDto[]> Read(string cardName)
         {
-            var cards = _cards.ToDtos().Where(card => card.Name == cardName).ToArray();
-            if (cards.Length > 0) return cards;
+            var cards = _cards.Where(card => card.Name == cardName).ToList();
+            if (cards.Count > 0) return cards.ToDtosBase64Img_UTF8().ToArray();
             return NotFound();
         }
 
         [HttpPost]
         public ActionResult Create(CreateInformationCardDto dto)
         {
+            dto = dto.FromBase64Img_UTF8();
             var card = dto.ToInformationCard();
             _cards.Add(card);
-            return CreatedAtAction(nameof(Read), new { cardName = dto.Name }, card);
+            return CreatedAtAction(nameof(Read), new { cardName = card.Name }, card); //нету шифрования
         }
 
         [HttpPut]
         public ActionResult Update(string cardName, UpdateInformationCardDto dto)
         {
+            dto = dto.FromBase64Img_UTF8();
             var selectedCards = _cards.Where(e => e.Name.Equals(cardName)).ToArray();
             foreach (var selectedCard in selectedCards) { selectedCard.Name = dto.Name; selectedCard.Img = dto.Img; }
             if (selectedCards.Length == 0) return NotFound();

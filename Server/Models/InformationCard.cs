@@ -11,9 +11,4 @@ namespace Server.Models
         public string Name { get; set; }
         public string Img { get; set; }
     }
-    //img
-    //file(base64) => application.set(base64:IFileBridge)
-    //user(base64) => application.set(base64)
-    //user(base64) <= application.get(base64)
-    //application.get(base64) => file(base64)
 }

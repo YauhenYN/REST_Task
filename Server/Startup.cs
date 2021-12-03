@@ -33,7 +33,11 @@ namespace Server
                 var model = new Services.JsonFileBridge<Models.InformationCard>(Configuration["InformationCardsPath"]);
                 return model;
             });
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
+
             services.AddSwaggerGen();
         }
 

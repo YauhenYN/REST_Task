@@ -8,7 +8,34 @@ namespace Server.Models
 {
     public class InformationCard : IEntity
     {
-        public string Name { get; set; }
-        public string Img { get; set; }
+        private object _locker;
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                lock (_locker) { return _name; }
+            }
+            set
+            {
+                lock (_locker) { _name = value; }
+            }
+        }
+        private string _img;
+        public string Img
+        {
+            get
+            {
+                lock (_locker) { return _img; }
+            }
+            set
+            {
+                lock (_locker) { _img = value; }
+            }
+        }
+        public InformationCard()
+        {
+            _locker = new object();
+        }
     }
 }

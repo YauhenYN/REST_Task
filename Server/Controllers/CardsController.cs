@@ -14,55 +14,55 @@ namespace Server.Controllers
     {
 
         private readonly ILogger<CardsController> _logger;
-        private readonly List<Models.InformationCard> _cards;
+        private readonly Services.IFileBridge<Models.InformationCard> _bridge;
 
         public CardsController(ILogger<CardsController> logger, Services.IFileBridge<Models.InformationCard> fileBridge)
         {
             _logger = logger;
-            _cards = fileBridge.Contexts;
+            _bridge = fileBridge;
         }
 
 
         //CRUD
         [HttpGet]
-        public ActionResult<InformationCardDto[]> ReadAll()
+        public async Task<ActionResult<InformationCardDto[]>> ReadAllAsync()
         {
-            if (_cards.Count > 0) return _cards.ToDtosBase64Img_UTF8().ToArray();
-            return NotFound();
+            if (_bridge.Entities.Count > 0) return (await _bridge.GetAllAsync()).ToDtosBase64Img_UTF8().ToArray();
+            else return NotFound();
         }
 
         [Route("{cardName}")]
         [HttpGet]
-        public ActionResult<InformationCardDto[]> Read(string cardName)
+        public async Task<ActionResult<InformationCardDto[]>> ReadAsync(string cardName)
         {
-            var cards = _cards.Where(card => card.Name == cardName).ToList();
-            if (cards.Count > 0) return cards.ToDtosBase64Img_UTF8().ToArray();
-            return NotFound();
+            var cards = await _bridge.GetAsync(card => card.Name.Equals(cardName));
+            if (cards.Count() > 0) return cards.ToDtosBase64Img_UTF8().ToArray();
+            else return NotFound();
         }
 
         [HttpPost]
-        public ActionResult<InformationCardDto> Create(CreateInformationCardDto dto)
+        public async Task<ActionResult<InformationCardDto>> CreateAsync(CreateInformationCardDto dto)
         {
             dto = dto.FromBase64Img_UTF8();
             var card = dto.ToInformationCard();
-            _cards.Add(card);
-            return CreatedAtAction(nameof(Read), new { cardName = card.Name }, card.ToDtoBase64Img_UTF8());
+            await _bridge.CreateAsync(card);
+            return CreatedAtAction(nameof(ReadAsync), new { cardName = card.Name }, card.ToDtoBase64Img_UTF8());
         }
 
         [HttpPut("cardName")]
-        public ActionResult Update(string cardName, UpdateInformationCardDto dto)
+        public async Task<ActionResult> UpdateAsync(string cardName, UpdateInformationCardDto dto)
         {
             dto = dto.FromBase64Img_UTF8();
-            var selectedCards = _cards.Where(e => e.Name.Equals(cardName)).ToArray();
-            if (selectedCards.Length == 0) return NotFound();
-            foreach (var selectedCard in selectedCards) { selectedCard.Name = dto.Name; selectedCard.Img = dto.Img; }
+            if (!_bridge.Entities.Any(card => card.Name.Equals(cardName))) return NotFound();
+            await _bridge.UpdateAllAsync(card => card.Name.Equals(cardName), dto.ToInformationCard());
             return NoContent();
         }
 
         [HttpDelete("cardName")]
-        public ActionResult Delete(string cardName)
+        public async Task<ActionResult> DeleteAsync(string cardName)
         {
-            if (_cards.RemoveAll(e => e.Name.Equals(cardName)) == 0) return NotFound();
+            if (!_bridge.Entities.Any(card => card.Name.Equals(cardName))) return NotFound();
+            await _bridge.RemoveAllAsync(card => card.Name.Equals(cardName));
             return NoContent();
         }
     }

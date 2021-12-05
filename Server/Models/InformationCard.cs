@@ -37,5 +37,10 @@ namespace Server.Models
         {
             _locker = new object();
         }
+
+        public object Clone()
+        {
+            return new InformationCard() { Name = _name, Img = _img };
+        }
     }
 }

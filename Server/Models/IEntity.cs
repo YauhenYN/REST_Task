@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Server.Models
 {
-    public interface IEntity
+    public interface IEntity : ICloneable
     {
 
     }

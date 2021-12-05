@@ -33,7 +33,7 @@ namespace Server.Services
         {
             for(int step = 0; step < Entities.Count; step++)
             {
-                if (predicate(Entities[step])) Entities[step] = entity;
+                if (predicate(Entities[step])) Entities[step] = (Entity)entity.Clone();
             }
             await Task.CompletedTask;
         }

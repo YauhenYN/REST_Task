@@ -85,8 +85,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\Extensions.cs" />
-    <Compile Include="Models\InformationCard.cs" />
+    <Compile Include="Dtos\Extensions.cs" />
+    <Compile Include="Dtos\InformationCardDto.cs" />
     <Compile Include="Web\ICRUDAsync.cs" />
     <Compile Include="Web\HTTPClient.cs" />
     <Compile Include="Web\InformationCards_Client.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -13,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Client.Dtos;
+using Microsoft.Win32;
 
 namespace Client
 {
@@ -22,9 +25,11 @@ namespace Client
     public partial class MainWindow : Window
     {
         Web.InformationCards_Client client;
+        OpenFileDialog _openFileDialog;
         public MainWindow()
         {
             client = new Web.InformationCards_Client("http://localhost:5000/");
+            _openFileDialog = new OpenFileDialog() { Filter = "Image files(*.png;*.jpg;)|*.png;*.jpg|All files (*.*)|*.*" };
             InitializeComponent();
         }
         private async void ClickRead(object sender, RoutedEventArgs e)
@@ -39,11 +44,20 @@ namespace Client
                     for (int step = 0; step < cards.Count(); step++)
                     {
                         StackPanel panel = new StackPanel();
+                        panel.Margin = new Thickness(0, 10, 0, 10);
+                        panel.Background = new SolidColorBrush(Color.FromRgb(212, 105, 105));
                         TextBlock name = new TextBlock();
                         name.Text = cards[step].Name;
                         name.Margin = new Thickness(0, 10, 0, 10);
-                        TextBlock img = new TextBlock();
-                        img.Text = cards[step].Img;
+                        UIElement img;
+                        try
+                        {
+                            img = Convert.FromBase64String(cards[step].Img).ToImage();
+                        }
+                        catch(NotSupportedException ex)
+                        {
+                            img = new TextBlock() { Text = $"Unsupported format - {ex.Message}" };
+                        }
                         panel.Children.Add(name);
                         panel.Children.Add(img);
                         ReadPanel.Children.Add(panel);
@@ -69,11 +83,20 @@ namespace Client
                 for (int step = 0; step < cards.Count(); step++)
                 {
                     StackPanel panel = new StackPanel();
+                    panel.Margin = new Thickness(0, 10, 0, 10);
+                    panel.Background = new SolidColorBrush(Color.FromRgb(212, 105, 105));
                     TextBlock name = new TextBlock();
                     name.Text = cards[step].Name;
                     name.Margin = new Thickness(0, 10, 0, 10);
-                    TextBlock img = new TextBlock();
-                    img.Text = cards[step].Img;
+                    UIElement img;
+                    try
+                    {
+                        img = Convert.FromBase64String(cards[step].Img).ToImage();
+                    }
+                    catch (NotSupportedException ex)
+                    {
+                        img = new TextBlock() { Text = $"Unsupported format - {ex.Message}" };
+                    }
                     panel.Children.Add(name);
                     panel.Children.Add(img);
                     ReadAllPanel.Children.Add(panel);
@@ -84,17 +107,51 @@ namespace Client
                 ReadAllPanel.Children.Add(new TextBlock() { Text = ex.Message });
             }
         }
+        private string _pickingImgCreate = "";
+        private void PickImgCreate(object sender, RoutedEventArgs e)
+        {
+            if (_openFileDialog.ShowDialog() == true)
+            {
+                using (FileStream stream = new FileStream(_openFileDialog.FileName, FileMode.Open))
+                {
+                    byte[] bytes = new byte[stream.Length];
+                    stream.Read(bytes, 0, bytes.Length);
+                    _pickingImgCreate = Convert.ToBase64String(bytes);
+                    CreateIndicator.Fill = new SolidColorBrush() { Color = Color.FromRgb(16, 191, 45) };
+                }
+            }
+        }
         private async void ClickCreate(object sender, RoutedEventArgs e)
         {
             CreatePanel.Children.Clear();
             try
             {
-                await client.CreateAsync(new Models.InformationCard() { Name = CreateName.Text, Img = CreateImg.Text });
-                CreatePanel.Children.Add(new TextBlock() { Text = "Created" });
+                if (_pickingImgCreate != "")
+                {
+                    await client.CreateAsync(new Dtos.InformationCardDto() { Name = CreateName.Text, Img = _pickingImgCreate });
+                    CreatePanel.Children.Add(new TextBlock() { Text = "Created" });
+                    _pickingImgCreate = "";
+                    CreateIndicator.Fill = new SolidColorBrush() { Color = Color.FromRgb(139, 0, 0) };
+                }
+                else CreatePanel.Children.Add(new TextBlock() { Text = "No image picked" });
             }
             catch (WebException ex)
             {
                 CreatePanel.Children.Add(new TextBlock() { Text = ex.Message });
+            }
+        }
+        private string _pickingImgUpdate = "";
+        private void PickImgUpdate(object sender, RoutedEventArgs e)
+        {
+            if (_openFileDialog.ShowDialog() == true)
+            {
+                using (FileStream stream = new FileStream(_openFileDialog.FileName, FileMode.Open))
+                {
+                    byte[] bytes = new byte[stream.Length];
+                    stream.Read(bytes, 0, bytes.Length);
+                    _pickingImgUpdate = Convert.ToBase64String(bytes);
+                }
+                UpdateIndicator.Fill = new SolidColorBrush() { Color = Color.FromRgb(16, 191, 45) };
             }
         }
         private async void ClickUpdate(object sender, RoutedEventArgs e)
@@ -102,8 +159,14 @@ namespace Client
             UpdatePanel.Children.Clear();
             try
             {
-                await client.UpdateAllAsync(SearchName.Text, new Models.InformationCard() { Name = UpdateName.Text, Img = UpdateImg.Text });
-                UpdatePanel.Children.Add(new TextBlock() { Text = "All Updated" });
+                if (_pickingImgUpdate != "")
+                {
+                    await client.UpdateAllAsync(SearchName.Text, new Dtos.InformationCardDto() { Name = UpdateName.Text, Img = _pickingImgUpdate });
+                    UpdatePanel.Children.Add(new TextBlock() { Text = "All Updated" });
+                    _pickingImgUpdate = "";
+                    UpdateIndicator.Fill = new SolidColorBrush() { Color = Color.FromRgb(139, 0, 0) };
+                }
+                else UpdatePanel.Children.Add(new TextBlock() { Text = "No image picked" });
             }
             catch (WebException ex)
             {
@@ -130,6 +193,12 @@ namespace Client
         private void ClearReadAll(object sender, RoutedEventArgs e)
         {
             ReadAllPanel.Children.Clear();
+        }
+        private void SortCards(object sender, RoutedEventArgs e)
+        {
+            var list = ReadAllPanel.Children.Cast<StackPanel>().OrderBy(panel => ((TextBlock)panel.Children[0]).Text).ToArray();
+            ReadAllPanel.Children.Clear();
+            foreach (var panel in list) ReadAllPanel.Children.Add(panel);
         }
     }
 }

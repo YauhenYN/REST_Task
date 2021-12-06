@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Models
+namespace Client.Dtos
 {
-    public class InformationCard
+    public class InformationCardDto
     {
         [JsonProperty("name")]
         public string Name { get; set; }

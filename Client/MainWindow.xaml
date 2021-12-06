@@ -6,88 +6,95 @@
         xmlns:local="clr-namespace:Client"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <StackPanel>
-        <Expander Header="Read" Background="Azure">
+    <Grid>
+        <ScrollViewer>
             <StackPanel>
-                <TextBlock>Reads all the elements with the same name</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Name</TextBlock>
-                    <TextBox MaxLength="250" x:Name="ReadName" Width="200"></TextBox>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button Width="80" Margin="5" Click="ClickRead" Content="Read"/>
-                    <Button Width="80" Margin="5" Click="ClearRead" Content="Clear"/>
-                </StackPanel>
-                <StackPanel x:Name="ReadPanel">
-                </StackPanel>
+                <Expander Header="Read" Background="Azure">
+                    <StackPanel>
+                        <TextBlock>Reads all the elements with the same name</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>Name</TextBlock>
+                            <TextBox MaxLength="250" x:Name="ReadName" Width="200"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Width="80" Margin="5" Click="ClickRead" Content="Read"/>
+                            <Button Width="80" Margin="5" Click="ClearRead" Content="Clear"/>
+                        </StackPanel>
+                        <StackPanel x:Name="ReadPanel">
+                        </StackPanel>
+                    </StackPanel>
+                </Expander>
+                <Expander Header="ReadAll" Background="LavenderBlush">
+                    <StackPanel>
+                        <TextBlock>Reads all the elements</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Width="80" Margin="5" Click="ClickReadAll" Content="Read"/>
+                            <Button Width="80" Margin="5" Click="ClearReadAll" Content="Clear"/>
+                            <Button Width="80" Margin="5" Click="SortCards" Content="Sort"/>
+                        </StackPanel>
+                        <StackPanel x:Name="ReadAllPanel">
+                        </StackPanel>
+                    </StackPanel>
+                </Expander>
+                <Expander Header="Create" Background="LightYellow">
+                    <StackPanel>
+                        <TextBlock>Creates one element</TextBlock>
+                        <TextBlock>New Element</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>Name</TextBlock>
+                            <TextBox MaxLength="250" x:Name="CreateName" Width="200"></TextBox>
+                        </StackPanel>
+                        <StackPanel Margin ="0, 10, 0, 0" Orientation="Horizontal">
+                            <TextBlock>Img</TextBlock>
+                            <Button Margin ="5,0,0,0"  Click="PickImgCreate" Content = "Pick an image" Width="100"></Button>
+                            <Ellipse Fill="DarkRed" Name ="CreateIndicator" Height="20" Width="20" Margin="10, 0, 0, 0"></Ellipse>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Width="80" Margin="5" Click ="ClickCreate" Content="Create"/>
+                        </StackPanel>
+                        <StackPanel x:Name="CreatePanel">
+                        </StackPanel>
+                    </StackPanel>
+                </Expander>
+                <Expander Header="Update" Background="Thistle">
+                    <StackPanel>
+                        <TextBlock>Updates all the elements with the same name</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>Name for search</TextBlock>
+                            <TextBox MaxLength="250" x:Name="SearchName" Width="200"></TextBox>
+                        </StackPanel>
+                        <TextBlock Margin="0,10,0,0">New Element</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>Name</TextBlock>
+                            <TextBox MaxLength="250" x:Name="UpdateName" Width="200"></TextBox>
+                        </StackPanel>
+                        <StackPanel Margin ="0, 10, 0, 0" Orientation="Horizontal">
+                            <TextBlock>Img</TextBlock>
+                            <Button Margin ="5,0,0,0"  Click="PickImgUpdate" Content = "Pick an image" Width="100"></Button>
+                            <Ellipse Fill="DarkRed" Name ="UpdateIndicator" Height="20" Width="20" Margin="10, 0, 0, 0"></Ellipse>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Width="80" Margin="5" Click="ClickUpdate" Content="Update"/>
+                        </StackPanel>
+                        <StackPanel x:Name="UpdatePanel">
+                        </StackPanel>
+                    </StackPanel>
+                </Expander>
+                <Expander Header="Delete" Background="Honeydew">
+                    <StackPanel>
+                        <TextBlock>Deletes all the elements with the same name</TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>Name</TextBlock>
+                            <TextBox MaxLength="250" Name="DeleteName" Width="200"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Width="80" Margin="5" Click ="ClickDelete" Content="Delete"/>
+                        </StackPanel>
+                        <StackPanel x:Name="DeletePanel">
+                        </StackPanel>
+                    </StackPanel>
+                </Expander>
             </StackPanel>
-        </Expander>
-        <Expander Header="ReadAll" Background="LavenderBlush">
-            <StackPanel>
-                <TextBlock>Reads all the elements</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <Button Width="80" Margin="5" Click="ClickReadAll" Content="Read"/>
-                    <Button Width="80" Margin="5" Click="ClearReadAll" Content="Clear"/>
-                </StackPanel>
-                <StackPanel x:Name="ReadAllPanel">
-                </StackPanel>
-            </StackPanel>
-        </Expander>
-        <Expander Header="Create" Background="LightYellow">
-            <StackPanel>
-                <TextBlock>Creates one element</TextBlock>
-                <TextBlock>New Element</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Name</TextBlock>
-                    <TextBox MaxLength="250" x:Name="CreateName" Width="200"></TextBox>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Img</TextBlock>
-                    <TextBox MaxLength="250" x:Name="CreateImg" Width="200"></TextBox>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button Width="80" Margin="5" Click ="ClickCreate" Content="Create"/>
-                </StackPanel>
-                <StackPanel x:Name="CreatePanel">
-                </StackPanel>
-            </StackPanel>
-        </Expander>
-        <Expander Header="Update" Background="Thistle">
-            <StackPanel>
-                <TextBlock>Updates all the elements with the same name</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Name for search</TextBlock>
-                    <TextBox MaxLength="250" x:Name="SearchName" Width="200"></TextBox>
-                </StackPanel>
-                <TextBlock Margin="0,10,0,0">New Element</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Name</TextBlock>
-                    <TextBox MaxLength="250" x:Name="UpdateName" Width="200"></TextBox>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Img</TextBlock>
-                    <TextBox MaxLength="250" x:Name="UpdateImg" Width="200"></TextBox>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button Width="80" Margin="5" Click="ClickUpdate" Content="Update"/>
-                </StackPanel>
-                <StackPanel x:Name="UpdatePanel">
-                </StackPanel>
-            </StackPanel>
-        </Expander>
-        <Expander Header="Delete" Background="Honeydew">
-            <StackPanel>
-                <TextBlock>Deletes all the elements with the same name</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Name</TextBlock>
-                    <TextBox MaxLength="250" Name="DeleteName" Width="200"></TextBox>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button Width="80" Margin="5" Click ="ClickDelete" Content="Delete"/>
-                </StackPanel>
-                <StackPanel x:Name="DeletePanel">
-                </StackPanel>
-            </StackPanel>
-        </Expander>
-    </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </Window>

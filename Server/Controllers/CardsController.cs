@@ -43,8 +43,7 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<ActionResult<InformationCardDto>> CreateAsync(CreateInformationCardDto dto)
         {
-            dto = dto.FromBase64Img_UTF8();
-            var card = dto.ToInformationCard();
+            var card = dto.ToInformationCardFromBase64();
             await _bridge.CreateAsync(card);
             return CreatedAtAction(nameof(ReadAsync), new { cardName = card.Name }, card.ToDtoBase64Img_UTF8());
         }
@@ -52,9 +51,8 @@ namespace Server.Controllers
         [HttpPut("cardName")]
         public async Task<ActionResult> UpdateAsync(string cardName, UpdateInformationCardDto dto)
         {
-            dto = dto.FromBase64Img_UTF8();
             if (!_bridge.Entities.Any(card => card.Name.Equals(cardName))) return NotFound();
-            await _bridge.UpdateAllAsync(card => card.Name.Equals(cardName), dto.ToInformationCard());
+            await _bridge.UpdateAllAsync(card => card.Name.Equals(cardName), dto.ToInformationCardFromBase64());
             return NoContent();
         }
 

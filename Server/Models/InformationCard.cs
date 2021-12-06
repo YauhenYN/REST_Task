@@ -21,8 +21,8 @@ namespace Server.Models
                 lock (_locker) { _name = value; }
             }
         }
-        private string _img;
-        public string Img
+        private byte[] _img;
+        public byte[] Img
         {
             get
             {

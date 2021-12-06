@@ -22,10 +22,11 @@ namespace Server.Services
 
         public override void Save()
         {
-            using (FileStream stream = new FileStream(Path, FileMode.Create))
+            string str = JsonSerializer.Serialize<List<Entity>>(Entities);
+            using (StreamWriter writer = new StreamWriter(new FileStream(Path, FileMode.Create)))
             {
-                JsonSerializer.SerializeAsync<List<Entity>>(stream, Entities);
-                stream.Flush();
+                writer.Write(str);
+                writer.Flush();
             }
         }
     }
